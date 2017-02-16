@@ -97,7 +97,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void changeMessageAndBackgroundColor(String value) {
         int intValue = Integer.valueOf(value);
-        if (intValue == 0) {
+        if (intValue < 0) {
+            // TODO: error handling
+            return;
+        } else if (intValue == 0) {
             // on the air.
             mTextViewMessage.setText("待機中です");
             mLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.white));
