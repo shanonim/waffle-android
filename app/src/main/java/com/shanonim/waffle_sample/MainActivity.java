@@ -2,11 +2,9 @@ package com.shanonim.waffle_sample;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.physicaloid.lib.Physicaloid;
@@ -17,9 +15,11 @@ import java.io.UnsupportedEncodingException;
 public class MainActivity extends AppCompatActivity {
 
     String mValue;
-    RelativeLayout mLayout;
-    TextView mTextViewSerialValue;
-    TextView mTextViewMessage;
+    String mHumidity;
+    String mTemperature;
+    TextView mTextViewInformation;
+    TextView mTextViewHumidity;
+    TextView mTextViewTemperature;
     Button mButton;
     Handler mHandler;
     Physicaloid mPhysicaloid;
@@ -29,9 +29,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mLayout = (RelativeLayout) findViewById(R.id.layout_main_activity);
-        mTextViewSerialValue = (TextView) findViewById(R.id.text_view_serial_data);
-        mTextViewMessage = (TextView) findViewById(R.id.text_view_message);
+        mTextViewInformation = (TextView) findViewById(R.id.text_view_information);
+        mTextViewHumidity = (TextView) findViewById(R.id.text_view_humidity);
+        mTextViewTemperature = (TextView) findViewById(R.id.text_view_temperature);
         mButton = (Button) findViewById(R.id.button_main);
 
         if (mButton != null) {
@@ -58,13 +58,12 @@ public class MainActivity extends AppCompatActivity {
     public void readValue() {
         if (!mPhysicaloid.isOpened()) {
             if (mPhysicaloid.open()) {
-                mTextViewSerialValue.setText("open.");
+                mTextViewInformation.setVisibility(View.GONE);
                 mButton.setText("Stop");
 
-                mPhysicaloid.addReadListener(new ReadLisener() { // リスナー登録
-
+                mPhysicaloid.addReadListener(new ReadLisener() {
                     @Override
-                    public void onRead(int size) { // Androidでシリアル文字を受信したらコールバックが発生
+                    public void onRead(int size) {
                         byte[] buf = new byte[size];
 
                         mPhysicaloid.read(buf, size);
@@ -75,47 +74,26 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         Integer num = decodePacket(buf);
-                        mValue = String.valueOf(num); // 数字をString型へ変換
-                        mHandler.post(new Runnable() { // UIスレッドへ書き込む場合ハンドラを使う
+                        mValue = String.valueOf(num);
+                        separateString(mValue);
+
+                        mHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                mTextViewSerialValue.setText(mValue);
-                                changeMessageAndBackgroundColor(mValue);
+                                mTextViewHumidity.setText(mHumidity);
+                                mTextViewTemperature.setText(mTemperature);
                             }
                         });
                     }
                 });
 
             } else {
-                mTextViewSerialValue.setText("waiting open..");
+                mTextViewInformation.setVisibility(View.VISIBLE);
+                mTextViewInformation.setText("waiting open..");
             }
         } else {
             mPhysicaloid.close();
             mButton.setText("Start");
-        }
-    }
-
-    private void changeMessageAndBackgroundColor(String value) {
-        int intValue = Integer.valueOf(value);
-        if (intValue < 0) {
-            // TODO: error handling
-            return;
-        } else if (intValue == 0) {
-            // on the air.
-            mTextViewMessage.setText("待機中です");
-            mLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.white));
-        } else if (0 < intValue && intValue < 400) {
-            // dry.
-            mTextViewMessage.setText("土が乾いてきました");
-            mLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorDry));
-        } else if (400 <= intValue && intValue < 600) {
-            // it seems good.
-            mTextViewMessage.setText("ちょうどいい湿度です");
-            mLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorGood));
-        } else if (600 <= intValue && intValue < 1000) {
-            // too much moisture.
-            mTextViewMessage.setText("水が多すぎます");
-            mLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorTooMuchMoisture));
         }
     }
 
@@ -141,5 +119,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return -1;
+    }
+
+    private void separateString(String string) {
+        // TODO
     }
 }

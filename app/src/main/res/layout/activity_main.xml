@@ -11,24 +11,35 @@
     tools:context="com.shanonim.waffle_sample.MainActivity">
 
     <TextView
-        android:id="@+id/text_view_serial_data"
+        android:id="@+id/text_view_information"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:textColor="@android:color/black"
-        android:textSize="70dp"
-        tools:text="500" />
+        tools:text="information" />
 
     <TextView
-        android:id="@+id/text_view_message"
+        android:id="@+id/text_view_humidity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/text_view_serial_data"
+        android:layout_below="@+id/text_view_information"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="30dp"
+        android:textColor="@android:color/black"
         android:textSize="20dp"
-        tools:text="ちょうどいい水加減です" />
+        tools:text="current humidity = 20.0%" />
+
+    <TextView
+        android:id="@+id/text_view_temperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_view_humidity"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:textColor="@android:color/black"
+        android:textSize="20dp"
+        tools:text="temperature = 25.0℃" />
 
     <Button
         android:id="@+id/button_main"
@@ -37,6 +48,6 @@
         android:layout_centerInParent="true"
         android:width="200dp"
         android:height="100dp"
-        android:text="check moisture" />
+        android:text="check temperature" />
 
 </RelativeLayout>
